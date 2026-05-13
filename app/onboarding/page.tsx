@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 
 const steps = [
@@ -109,7 +110,7 @@ export default function Onboarding() {
         <div className="w-full max-w-lg">
           {/* Header */}
           <div className="flex items-center justify-between mb-12">
-            <a href="/" className="text-sm font-semibold">the norwegian effect.</a>
+            <Link href="/" className="text-sm font-semibold">the norwegian effect.</Link>
             <p className="text-sm text-gray-400">{current + 1} of {steps.length}</p>
           </div>
 

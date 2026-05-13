@@ -68,7 +68,7 @@ export default function Dashboard() {
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
             {profile?.full_name ? `Welcome back, ${profile.full_name.split(" ")[0]}.` : "Your training plan is being built."}
           </h1>
-          <p className="text-gray-400 text-lg font-light mb-12">We're generating your personalised plan based on your profile. Check back shortly.</p>
+          <p className="text-gray-400 text-lg font-light mb-12">We&apos;re generating your personalised plan based on your profile. Check back shortly.</p>
         </motion.div>
 
         {/* Week overview placeholder */}

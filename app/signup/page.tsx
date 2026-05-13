@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -39,9 +40,9 @@ export default function SignUp() {
   return (
     <main className="min-h-screen bg-white flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <a href="/" className="block text-sm text-gray-400 hover:text-black transition-colors mb-10">
+        <Link href="/" className="block text-sm text-gray-400 hover:text-black transition-colors mb-10">
           ← the norwegian effect.
-        </a>
+        </Link>
 
         <h1 className="text-3xl font-bold mb-2">Create your account</h1>
         <p className="text-gray-400 text-sm mb-8">Start your 30-day free trial. No card required.</p>
