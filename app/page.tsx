@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { createClient } from "@/lib/supabase";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
 
 const usps = [
@@ -237,6 +238,82 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   );
 }
 
+function WaitlistSection() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const supabase = createClient();
+    const { error } = await supabase.from("waitlist").insert({ email });
+
+    if (error) {
+      if (error.code === "23505") {
+        setError("You're already on the list!");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+      setLoading(false);
+      return;
+    }
+
+    setSubmitted(true);
+    setLoading(false);
+  };
+
+  return (
+    <section className="bg-black text-white px-6 md:px-12 py-24">
+      <div className="max-w-xl">
+        <FadeIn>
+          <p className="text-sm uppercase tracking-widest text-gray-400 mb-4">Early access</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+            Be the first to train smarter.
+          </h2>
+          <p className="text-gray-400 text-lg font-light mb-8">
+            Join the waitlist and get early access plus a free extended trial when we launch.
+          </p>
+          {submitted ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/10 rounded-2xl px-6 py-5"
+            >
+              <p className="text-white font-medium">You&apos;re on the list.</p>
+              <p className="text-gray-400 text-sm mt-1">We&apos;ll be in touch when early access opens.</p>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex gap-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="your@email.com"
+                className="flex-1 bg-white/10 border border-white/20 rounded-full px-5 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+              />
+              <motion.button
+                type="submit"
+                disabled={loading}
+                className="bg-white text-black px-6 py-3 rounded-full text-sm font-medium disabled:opacity-50"
+                whileHover={{ scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                {loading ? "Joining..." : "Join waitlist"}
+              </motion.button>
+            </form>
+          )}
+          {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   const [pricingOpen, setPricingOpen] = useState(false);
   const heroRef = useRef(null);
@@ -282,7 +359,7 @@ export default function Home() {
             Science-backed, adaptive endurance sport training plan
           </motion.p>
           <motion.h1
-            className="text-5xl md:text-7xl font-bold leading-tight tracking-tight mb-8 text-white"
+            className="text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-8 text-white"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4 }}
@@ -464,6 +541,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Waitlist */}
+      <WaitlistSection />
 
       {/* Footer */}
       <footer className="px-6 md:px-12 py-10 border-t border-gray-100">

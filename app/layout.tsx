@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
 });
@@ -21,9 +21,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} h-full antialiased`}
+      className={`${outfit.variable} h-full antialiased`}
     >
-      <body className={`min-h-full flex flex-col ${dmSans.variable} font-sans`}>{children}</body>
+      <body className={`min-h-full flex flex-col ${outfit.variable} font-sans`}>{children}</body>
     </html>
   );
 }
