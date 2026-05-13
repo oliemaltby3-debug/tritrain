@@ -109,7 +109,7 @@ export default function Onboarding() {
         <div className="w-full max-w-lg">
           {/* Header */}
           <div className="flex items-center justify-between mb-12">
-            <a href="/" className="text-sm font-semibold">the norwegian project.</a>
+            <a href="/" className="text-sm font-semibold">the norwegian effect.</a>
             <p className="text-sm text-gray-400">{current + 1} of {steps.length}</p>
           </div>
 

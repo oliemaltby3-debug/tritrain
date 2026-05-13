@@ -9,7 +9,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "the norwegian project",
+  title: "the norwegian effect",
   description: "Science-backed adaptive triathlon training plans",
 };
 

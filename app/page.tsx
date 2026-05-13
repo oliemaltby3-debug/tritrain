@@ -18,7 +18,7 @@ const usps = [
     imagePosition: "center",
   },
   {
-    title: "Built by an athlete, for athletes",
+    title: "Built for athletes by athletes",
     body: "You're not using a faceless app. This was built by a triathlete who lived this exact problem and spent real time solving it. That authenticity is something no corporate fitness platform can replicate.",
     image: "/pexels-cristian-camilo-estrada-2152272341-35757291.jpg",
     imagePosition: "0% center",
@@ -240,6 +240,7 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 function WaitlistSection() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -250,7 +251,7 @@ function WaitlistSection() {
     setError("");
 
     const supabase = createClient();
-    const { error } = await supabase.from("waitlist").insert({ email });
+    const { error } = await supabase.from("waitlist").insert({ email, name });
 
     if (error) {
       if (error.code === "23505") {
@@ -287,24 +288,34 @@ function WaitlistSection() {
               <p className="text-gray-400 text-sm mt-1">We&apos;ll be in touch when early access opens.</p>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex gap-3">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
-                placeholder="your@email.com"
-                className="flex-1 bg-white/10 border border-white/20 rounded-full px-5 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+                placeholder="What should we call you?"
+                className="bg-white/10 border border-white/20 rounded-full px-5 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
               />
-              <motion.button
-                type="submit"
-                disabled={loading}
-                className="bg-white text-black px-6 py-3 rounded-full text-sm font-medium disabled:opacity-50"
-                whileHover={{ scale: 1.03 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                {loading ? "Joining..." : "Join waitlist"}
-              </motion.button>
+              <div className="flex gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="your@email.com"
+                  className="flex-1 bg-white/10 border border-white/20 rounded-full px-5 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+                />
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-white text-black px-6 py-3 rounded-full text-sm font-medium disabled:opacity-50"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  {loading ? "Joining..." : "Join waitlist"}
+                </motion.button>
+              </div>
             </form>
           )}
           {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
@@ -325,7 +336,7 @@ export default function Home() {
     <main className="min-h-screen bg-white text-black">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 bg-white/80 backdrop-blur-sm border-b border-gray-100">
-        <span className="text-lg font-semibold tracking-tight">the norwegian project.</span>
+        <span className="text-lg font-semibold tracking-tight">the norwegian effect.</span>
         <div className="flex items-center gap-6 text-sm">
           <a href="#science" className="text-gray-500 hover:text-black transition-colors">The Method</a>
           <button onClick={() => setPricingOpen(true)} className="text-gray-500 hover:text-black transition-colors">Pricing</button>
@@ -548,7 +559,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="px-6 md:px-12 py-10 border-t border-gray-100">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">the norwegian project</span>
+          <span className="text-sm font-medium">the norwegian effect</span>
           <p className="text-sm text-gray-400">© 2026</p>
         </div>
       </footer>

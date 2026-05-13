@@ -33,7 +33,7 @@ export default function Login() {
     <main className="min-h-screen bg-white flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <a href="/" className="block text-sm text-gray-400 hover:text-black transition-colors mb-10">
-          ← the norwegian project.
+          ← the norwegian effect.
         </a>
 
         <h1 className="text-3xl font-bold mb-2">Welcome back</h1>

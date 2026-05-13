@@ -51,7 +51,7 @@ export default function Dashboard() {
     <main className="min-h-screen bg-white">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 md:px-12 border-b border-gray-100">
-        <span className="text-lg font-semibold tracking-tight">the norwegian project.</span>
+        <span className="text-lg font-semibold tracking-tight">the norwegian effect.</span>
         <div className="flex items-center gap-6 text-sm">
           <a href="/dashboard" className="text-black font-medium">My Plan</a>
           <button onClick={handleLogout} className="text-gray-400 hover:text-black transition-colors">Log out</button>
