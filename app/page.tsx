@@ -268,8 +268,9 @@ function WaitlistSection() {
   };
 
   return (
-    <section className="bg-black text-white px-6 md:px-12 py-24">
-      <div className="max-w-xl">
+    <section className="relative text-white px-6 md:px-12 py-24 overflow-hidden" style={{ backgroundImage: "url('/joshua-tsu-k27fjLXCuuo-unsplash.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="relative z-10 max-w-xl">
         <FadeIn>
           <p className="text-sm uppercase tracking-widest text-gray-400 mb-4">Early access</p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
@@ -319,6 +320,21 @@ function WaitlistSection() {
             </form>
           )}
           {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
+        </FadeIn>
+
+        <FadeIn>
+          <div className="mt-16 pt-10 border-t border-white/10">
+            <p className="text-sm uppercase tracking-widest text-gray-400 mb-3">Got questions?</p>
+            <p className="text-white text-lg font-light mb-4">
+              Whether it&apos;s about training, the platform, or just triathlon in general — we&apos;re always up for the conversation.
+            </p>
+            <a
+              href="mailto:hello@thenorwegianeffect.com"
+              className="inline-block text-sm text-white underline underline-offset-4 hover:text-gray-300 transition-colors"
+            >
+              hello@thenorwegianeffect.com
+            </a>
+          </div>
         </FadeIn>
       </div>
     </section>
@@ -428,28 +444,28 @@ export default function Home() {
         <USPSlideshow />
       </section>
 
-      {/* The Method */}
-      <section id="science" className="px-6 md:px-12 py-24">
+      {/* Community */}
+      <section id="community" className="px-6 md:px-12 py-24">
         <div className="max-w-3xl">
           <FadeIn>
-            <p className="text-sm uppercase tracking-widest text-gray-400 mb-4">The method</p>
+            <p className="text-sm uppercase tracking-widest text-gray-400 mb-4">Community</p>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-8">
-              Built on the Norwegian model
+              A community of like-minded athletes.
             </h2>
           </FadeIn>
           <FadeIn delay={0.15}>
             <p className="text-gray-500 text-lg leading-relaxed mb-6 font-light">
-              The Norwegian training method has produced some of the fastest triathletes in the world. It centres on high-volume, low-intensity aerobic work — protecting the athlete from overtraining while building an enormous aerobic engine.
+              The norwegian effect is more than a training platform — it&apos;s a place to belong. Whether you&apos;re lining up for your first sprint triathlon or chasing a sub-10 Ironman, you&apos;re training alongside people who get it.
             </p>
           </FadeIn>
           <FadeIn delay={0.25}>
             <p className="text-gray-500 text-lg leading-relaxed mb-6 font-light">
-              Most amateur plans get this wrong — pushing athletes too hard too often. We fix that. Every session has a purpose, every week is periodised, and the load is calculated around your life — not the other way around.
+              Share sessions, swap race tips, ask the questions Google just can&apos;t answer. This is a space built for honest conversation — about training, nutrition, gear, and the mental side of endurance sport that nobody talks about enough. From your first open water swim to your tenth finish line, every level belongs here.
             </p>
           </FadeIn>
           <FadeIn delay={0.35}>
             <p className="text-gray-500 text-lg leading-relaxed font-light">
-              Miss a session? The plan restructures. Have a race coming up? The plan tapers. It is the kind of coaching that used to cost hundreds per month.
+              Same goals. Same obsession. Different starting points. That&apos;s the community.
             </p>
           </FadeIn>
         </div>
@@ -458,10 +474,10 @@ export default function Home() {
       {/* Portrait images */}
       <section className="px-6 md:px-12 py-24 flex justify-center gap-6">
         {[
-          "/maksym-tymchyk-4yC5nR1PZa0-unsplash.jpg",
-          "/kirsten-frank-EWdxx8m1uh4-unsplash.jpg",
-          "/nick-gosset-3DJfakd6VoU-unsplash.jpg",
-        ].map((src, i) => (
+          { src: "/maksym-tymchyk-4yC5nR1PZa0-unsplash.jpg", label: "go deeper." },
+          { src: "/kirsten-frank-EWdxx8m1uh4-unsplash.jpg", label: "go harder." },
+          { src: "/nick-gosset-3DJfakd6VoU-unsplash.jpg", label: "go further." },
+        ].map(({ src, label }, i) => (
           <FadeIn key={src} delay={i * 0.15}>
             <div className="relative w-72 h-96 overflow-hidden rounded-2xl">
               <img
@@ -470,6 +486,9 @@ export default function Home() {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 rounded-2xl" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)" }} />
+              <div className="absolute inset-0 flex items-end justify-center pb-8 px-4">
+                <p className="text-3xl font-bold text-white text-center drop-shadow-lg">{label}</p>
+              </div>
             </div>
           </FadeIn>
         ))}
