@@ -327,7 +327,7 @@ export default function Home() {
     <main className="min-h-screen bg-white text-black">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 bg-white/80 backdrop-blur-sm border-b border-gray-100">
-        <span className="text-lg font-semibold tracking-tight">the norwegian effect.</span>
+        <span className="text-2xl font-semibold tracking-tight" style={{ fontFamily: "var(--font-playfair)" }}>the norwegian effect.</span>
         <div className="flex items-center gap-6 text-sm">
           <a href="#science" className="hidden md:block text-gray-500 hover:text-black transition-colors">The Method</a>
           <button onClick={() => setPricingOpen(true)} className="hidden md:block text-gray-500 hover:text-black transition-colors">Pricing</button>
@@ -371,7 +371,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4 }}
           >
-            Train like the best.<br />Feel like yourself.
+            It's about<br />the process.
           </motion.h1>
           <motion.p
             className="text-lg md:text-xl text-gray-300 max-w-xl mb-10 leading-relaxed font-light"
@@ -461,11 +461,13 @@ export default function Home() {
       </section>
 
       {/* Why us */}
-      <section className="px-6 md:px-12 py-24">
-        <div className="max-w-3xl">
+      <section className="relative px-6 md:px-12 py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ backgroundImage: "url('/17-a-running-tracks-example-2.jpg')", backgroundSize: "cover", backgroundPosition: "center" }} />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(73,71,91,0.93)" }} />
+        <div className="relative z-10 max-w-3xl">
           <FadeIn>
-            <p className="text-sm uppercase tracking-widest mb-4" style={{ color: "#799496" }}>Why us</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-12">Why choose the norwegian effect?</h2>
+            <p className="text-sm uppercase tracking-widest mb-4" style={{ color: "#ACC196" }}>Why us</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-12 text-white">Why choose the norwegian effect?</h2>
           </FadeIn>
           <div className="space-y-10">
             {[
@@ -484,10 +486,10 @@ export default function Home() {
             ].map((item, i) => (
               <FadeIn key={item.title} delay={i * 0.15}>
                 <div className="flex gap-6 items-start">
-                  <span className="text-sm font-bold mt-1 shrink-0" style={{ color: "#49475B" }}>0{i + 1}</span>
+                  <span className="text-sm font-bold mt-1 shrink-0" style={{ color: "#E9EB9E" }}>0{i + 1}</span>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                    <p className="text-gray-500 font-light leading-relaxed">{item.body}</p>
+                    <h3 className="text-xl font-bold mb-2 text-white">{item.title}</h3>
+                    <p className="font-light leading-relaxed" style={{ color: "#c8c8d4" }}>{item.body}</p>
                   </div>
                 </div>
               </FadeIn>
@@ -657,7 +659,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="px-6 md:px-12 py-10 border-t" style={{ borderColor: "rgba(121,148,150,0.25)" }}>
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">the norwegian effect</span>
+          <span className="text-sm font-medium" style={{ fontFamily: "var(--font-playfair)" }}>the norwegian effect</span>
           <p className="text-sm text-gray-400">© 2026</p>
         </div>
       </footer>
