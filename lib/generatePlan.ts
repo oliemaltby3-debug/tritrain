@@ -3,6 +3,61 @@
 
 export type Discipline = "swim" | "bike" | "run" | "rest" | "brick";
 export type Intensity = "Z1" | "Z2" | "Z3" | "threshold" | "vo2max";
+export type TrainingPhase = "base" | "build" | "peak" | "taper";
+
+// ─── Phase helpers ────────────────────────────────────────────────────────────
+
+export function getWeeksToRace(raceTimeframe: string | null | undefined): number | null {
+  if (!raceTimeframe) return null;
+  // ISO date string e.g. "2026-09-14"
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raceTimeframe)) {
+    const raceDate = new Date(raceTimeframe);
+    const now = new Date();
+    const diffMs = raceDate.getTime() - now.getTime();
+    return Math.max(0, Math.round(diffMs / (7 * 24 * 60 * 60 * 1000)));
+  }
+  // Legacy text format
+  if (raceTimeframe.includes("Less than 8")) return 6;
+  if (raceTimeframe.includes("8")) return 12;
+  if (raceTimeframe.includes("16")) return 20;
+  if (raceTimeframe.includes("24")) return 28;
+  return null;
+}
+
+export function getTrainingPhase(weeksToRace: number | null): TrainingPhase {
+  if (weeksToRace === null) return "base";
+  if (weeksToRace <= 2) return "taper";
+  if (weeksToRace <= 5) return "peak";
+  if (weeksToRace <= 14) return "build";
+  return "base";
+}
+
+export const PHASE_LABELS: Record<TrainingPhase, string> = {
+  base:   "Base Phase",
+  build:  "Build Phase",
+  peak:   "Peak Phase",
+  taper:  "Taper",
+};
+
+export const PHASE_DESCRIPTIONS: Record<TrainingPhase, string> = {
+  base:  "Building your aerobic engine. High easy volume, minimal intensity.",
+  build: "Converting base fitness into race-specific speed and endurance.",
+  peak:  "Final sharpening. Race-specific sessions, volume near its highest.",
+  taper: "Arriving fresh. Volume drops 40–50% — intensity stays. Trust the process.",
+};
+
+export type SessionStatus = "pending" | "done" | "skipped";
+
+export const SKIP_REASONS = [
+  { id: "no_pool", label: "No pool access", emoji: "🏊" },
+  { id: "travelling", label: "Travelling", emoji: "✈️" },
+  { id: "tired", label: "Feeling tired", emoji: "😴" },
+  { id: "injury", label: "Injury / soreness", emoji: "🤕" },
+  { id: "busy", label: "Too busy", emoji: "⏰" },
+  { id: "other", label: "Just skipping", emoji: "👋" },
+] as const;
+
+export type SkipReasonId = typeof SKIP_REASONS[number]["id"];
 
 export interface Session {
   discipline: Discipline;
@@ -10,6 +65,8 @@ export interface Session {
   durationMin: number;
   label: string;
   description: string;
+  status?: SessionStatus;
+  skipReason?: SkipReasonId;
 }
 
 export interface DayPlan {
@@ -21,7 +78,7 @@ export type WeekPlan = DayPlan[];
 
 interface Profile {
   goal_race?: string | null;
-  race_timeframe?: string | null;
+  race_timeframe?: string | null; // ISO date string "YYYY-MM-DD" or legacy text
   weekly_hours?: string | null;
   fitness_level?: string | null;
   swim_level?: string | null;
@@ -141,7 +198,15 @@ function sessionDescription(discipline: Discipline, intensity: Intensity, durati
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export function generatePlan(profile: Profile): WeekPlan {
-  const totalMin = parseWeeklyMinutes(profile.weekly_hours);
+  const weeksToRace = getWeeksToRace(profile.race_timeframe);
+  const phase = getTrainingPhase(weeksToRace);
+
+  // Phase-based volume multiplier
+  const volumeMultiplier: Record<TrainingPhase, number> = {
+    base: 0.85, build: 1.0, peak: 1.0, taper: 0.5,
+  };
+
+  const totalMin = Math.round(parseWeeklyMinutes(profile.weekly_hours) * volumeMultiplier[phase]);
   const fitness = fitnessScore(profile.fitness_level);
   const swimScore = skillScore(profile.swim_level);
   const bikeScore = skillScore(profile.bike_level);
@@ -199,14 +264,31 @@ export function generatePlan(profile: Profile): WeekPlan {
   }
 
   // Build full sessions
-  const sessions: Session[] = raw.map(({ discipline, durationMin, isHighDay }) => {
+  const sessions: Session[] = raw.map(({ discipline, durationMin, isHighDay }, idx) => {
     if (discipline === "rest") {
       return { discipline: "rest", intensity: "Z1", durationMin: 0, label: "Rest Day", description: "Full recovery — sleep, stretch, and eat well." };
     }
     const score = discipline === "swim" ? swimScore : discipline === "bike" ? bikeScore : discipline === "run" || discipline === "brick" ? runScore : fitness;
-    const intensity = intensityForScore(score, isHighDay);
+    let intensity = intensityForScore(score, isHighDay);
     // Bump beginners to Z1 on easy days
-    const finalIntensity: Intensity = fitness === 0 && !isHighDay ? "Z1" : intensity;
+    if (fitness === 0 && !isHighDay) intensity = "Z1";
+
+    // Phase modifiers
+    if (phase === "taper") {
+      // Keep one quality session, rest easy
+      const qualityCount = sessions.filter(s => s.intensity === "threshold" || s.intensity === "vo2max").length;
+      if ((intensity === "threshold" || intensity === "vo2max") && qualityCount >= 1) intensity = "Z2";
+    }
+    if (phase === "base") {
+      // No vo2max in base — cap at threshold
+      if (intensity === "vo2max") intensity = "threshold";
+    }
+    if (phase === "build" && idx === 0) {
+      // Make first quality session in build phase threshold if score allows
+      if (score >= 2 && intensity === "Z3") intensity = "threshold";
+    }
+
+    const finalIntensity: Intensity = intensity;
     const dur = Math.max(20, durationMin);
     return {
       discipline,
