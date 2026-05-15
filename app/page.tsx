@@ -323,6 +323,24 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Handle OAuth callback code landing on homepage
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (code) {
+      const supabase = createClient();
+      supabase.auth.exchangeCodeForSession(code).then(async ({ error }) => {
+        if (!error) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: profile } = await supabase.from("profiles").select("id").eq("id", user.id).single();
+            window.location.href = profile ? "/dashboard" : "/onboarding";
+          }
+        }
+      });
+    }
+  }, []);
+
   return (
     <main className="min-h-screen bg-white text-black">
       {/* Nav */}
