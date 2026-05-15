@@ -70,7 +70,7 @@ function DateStep({
 
   // Calculate weeks away for preview
   const weeksAway = date
-    ? Math.max(0, Math.round((new Date(date).getTime() - Date.now()) / (7 * 24 * 60 * 60 * 1000)))
+    ? Math.max(0, Math.round((new Date(date).getTime() - new Date(today).getTime()) / (7 * 24 * 60 * 60 * 1000)))
     : null;
 
   const phase =
