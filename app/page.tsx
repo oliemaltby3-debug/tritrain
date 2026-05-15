@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
 
@@ -371,7 +371,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4 }}
           >
-            It's about<br />the process.
+            It&apos;s about<br />the process.
           </motion.h1>
           <motion.p
             className="text-lg md:text-xl text-gray-300 max-w-xl mb-10 leading-relaxed font-light"
