@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -66,12 +66,19 @@ function DateStep({
   onConfirm: (date: string) => void;
 }) {
   const [date, setDate] = useState("");
-  const today = new Date().toISOString().split("T")[0];
+  const [today] = useState(() => new Date().toISOString().split("T")[0]);
 
-  // Calculate weeks away for preview
-  const weeksAway = date
-    ? Math.max(0, Math.round((new Date(date).getTime() - new Date(today).getTime()) / (7 * 24 * 60 * 60 * 1000)))
-    : null;
+  // Calculate weeks away for preview — useMemo so no impure calls in render body
+  const weeksAway = useMemo(() => {
+    if (!date) return null;
+    return Math.max(
+      0,
+      Math.round(
+        (new Date(date).getTime() - new Date(today).getTime()) /
+          (7 * 24 * 60 * 60 * 1000)
+      )
+    );
+  }, [date, today]);
 
   const phase =
     weeksAway === null ? null
