@@ -323,19 +323,28 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle OAuth callback
+  // Handle OAuth callback code landing on homepage
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (!code) return;
+
     const supabase = createClient();
 
-    // Listen for auth state changes (handles PKCE automatically)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session) {
-        const { data: profile } = await supabase.from("profiles").select("id").eq("id", session.user.id).single();
-        window.location.href = profile ? "/dashboard" : "/onboarding";
+    const redirect = async (session: { user: { id: string } }) => {
+      const { data: profile } = await supabase.from("profiles").select("id").eq("id", session.user.id).single();
+      window.location.href = profile ? "/dashboard" : "/onboarding";
+    };
+
+    supabase.auth.exchangeCodeForSession(code).then(async ({ data, error }) => {
+      if (!error && data.session) {
+        await redirect(data.session);
+      } else {
+        // Code may have already been exchanged — check for existing session
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) await redirect(session);
       }
     });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   return (
