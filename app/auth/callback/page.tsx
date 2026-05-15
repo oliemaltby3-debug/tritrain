@@ -5,10 +5,22 @@ import { createClient } from "@/lib/supabase";
 
 export default function AuthCallback() {
   useEffect(() => {
-    const handleCallback = async () => {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
+    const supabase = createClient();
 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("id", session.user.id)
+          .single();
+
+        window.location.href = profile ? "/dashboard" : "/onboarding";
+      }
+    });
+
+    // Also check for existing session immediately
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
         const { data: profile } = await supabase
           .from("profiles")
@@ -17,12 +29,10 @@ export default function AuthCallback() {
           .single();
 
         window.location.href = profile ? "/dashboard" : "/onboarding";
-      } else {
-        window.location.href = "/login";
       }
-    };
+    });
 
-    handleCallback();
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
