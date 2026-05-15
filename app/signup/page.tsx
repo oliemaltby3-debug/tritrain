@@ -16,10 +16,11 @@ export default function SignUp() {
 
   const handleGoogle = async () => {
     const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
+    if (oauthError) setError(oauthError.message);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,6 +114,7 @@ export default function SignUp() {
         </div>
 
         <button
+          type="button"
           onClick={handleGoogle}
           className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-full py-3 text-sm font-medium hover:border-black transition-colors"
         >
